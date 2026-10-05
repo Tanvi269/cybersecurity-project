@@ -1,0 +1,33 @@
+﻿services:
+  # ── Backend: FastAPI ──────────────────────────────────────────────
+  - type: web
+    name: cybershield-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///./cybershield.db
+    plan: free
+
+  # ── Frontend: React + Vite (Static Site) ─────────────────────────
+  - type: web
+    name: cybershield-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: cybershield-backend
+          type: web
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    plan: free
