@@ -1,4 +1,4 @@
-import datetime
+﻿import datetime
 from typing import List, Optional, Any, Dict
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,6 +41,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ------------------------------------------------------------------
+# ROOT / HEALTH CHECK
+# ------------------------------------------------------------------
+
+@app.get('/')
+def root():
+    return {
+        'status': 'online',
+        'service': 'CyberShield SOC API',
+        'version': '1.0.0',
+        'docs': '/docs'
+    }
+
+@app.get('/health')
+def health():
+    return {'status': 'healthy'}
 
 # ------------------------------------------------------------------
 # PYDANTIC SCHEMAS
